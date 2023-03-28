@@ -9,7 +9,7 @@ import (
 )
 
 type ExchangerInterface interface {
-	TrackCurrencyValue(string, string) (*models.TrackCurrencyResponse, error)
+	TrackCurrencyValue(string) (*models.TrackCurrencyResponse, error)
 }
 
 func ChooseExchanger(ex string) (ExchangerInterface, error) {

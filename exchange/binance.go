@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/pcpratheesh/crypto-currency-tracker-api/constants"
@@ -18,9 +19,9 @@ func NewBinanceExchanger() *Binance {
 	return &Binance{}
 }
 
-func (ex *Binance) TrackCurrencyValue(from string, to string) (*models.TrackCurrencyResponse, error) {
+func (ex *Binance) TrackCurrencyValue(crypto string) (*models.TrackCurrencyResponse, error) {
 	// prepare the url
-	url := fmt.Sprintf("%s/ticker/price?symbol=%s%s", constants.BINANCE_URL, strings.ToUpper(from), strings.ToUpper(to))
+	url := fmt.Sprintf("%s/ticker/price?symbol=%s%s", constants.BINANCE_URL, strings.ToUpper(crypto), strings.ToUpper("USDT"))
 
 	response, err := utils.MakeAPICall(url, http.MethodGet, nil, nil)
 	if err != nil {
@@ -40,9 +41,12 @@ func (ex *Binance) TrackCurrencyValue(from string, to string) (*models.TrackCurr
 		return nil, err
 	}
 
+	price, err := strconv.ParseFloat(binanceTickerResponse.Price, 64)
+	if err != nil {
+		return nil, err
+	}
+
 	return &models.TrackCurrencyResponse{
-		From:  from,
-		To:    to,
-		Value: binanceTickerResponse.Price,
+		Value: price,
 	}, nil
 }

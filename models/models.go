@@ -7,19 +7,14 @@ type BinanceTickerResponse struct {
 
 type CoinbaseResponse struct {
 	Data struct {
-		Base     string `json:"base"`
-		Currency string `json:"currency"`
-		Amount   string `json:"amount"`
+		Rates map[string]string `json:"rates"`
 	} `json:"data"`
 }
 
 type TrackCurrencyRequest struct {
-	Crypto string `json:"crypto" validate:"required"`
-	Base   string `json:"base" validate:"required"`
+	Currencies []string `json:"currencies" validate:"required"`
 }
 
 type TrackCurrencyResponse struct {
-	From  string      `json:"from"`
-	To    string      `json:"to"`
-	Value interface{} `json:"value"`
+	Value float64 `json:"value"`
 }

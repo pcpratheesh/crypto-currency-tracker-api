@@ -36,9 +36,8 @@ Retrieves the current prices of various cryptocurrencies from different exchange
     --url http://localhost:8085/api/v1/track/bitfinex \
     --header 'Content-Type: application/json' \
     --data '{
-        "crypto":"BTC",
-        "base":"USD"
-    }'
+	    "currencies":["BTC","ETH"]
+    }''
 ```
 
 - With binance
@@ -47,8 +46,7 @@ Retrieves the current prices of various cryptocurrencies from different exchange
     --url http://localhost:8085/api/v1/track/binance \
     --header 'Content-Type: application/json' \
     --data '{
-        "crypto":"BTC",
-        "base":"USDT"
+	    "currencies":["BTC","ETH"]
     }'
 ```
 
@@ -58,8 +56,7 @@ Retrieves the current prices of various cryptocurrencies from different exchange
     --url http://localhost:8085/api/v1/track/coinbase \
     --header 'Content-Type: application/json' \
     --data '{
-        "crypto":"BTC",
-        "base":"USDT"
+	    "currencies":["BTC","ETH"]
     }'
 ```
 

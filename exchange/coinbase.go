@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/pcpratheesh/crypto-currency-tracker-api/constants"
@@ -18,9 +19,9 @@ func NewCoinBaseExchanger() *Coinbase {
 	return &Coinbase{}
 }
 
-func (ex *Coinbase) TrackCurrencyValue(from string, to string) (*models.TrackCurrencyResponse, error) {
+func (ex *Coinbase) TrackCurrencyValue(crypto string) (*models.TrackCurrencyResponse, error) {
 	// prepare the url
-	url := fmt.Sprintf("%s/prices/%s-%s/spot", constants.COINBASE_URL, strings.ToUpper(from), strings.ToUpper(to))
+	url := fmt.Sprintf("%s/exchange-rates?currency=%s", constants.COINBASE_URL, strings.ToUpper(crypto))
 
 	response, err := utils.MakeAPICall(url, http.MethodGet, nil, nil)
 	if err != nil {
@@ -39,10 +40,12 @@ func (ex *Coinbase) TrackCurrencyValue(from string, to string) (*models.TrackCur
 	if err != nil {
 		return nil, err
 	}
+	price, err := strconv.ParseFloat(coinbaseResponse.Data.Rates["USD"], 64)
+	if err != nil {
+		return nil, err
+	}
 
 	return &models.TrackCurrencyResponse{
-		From:  from,
-		To:    to,
-		Value: coinbaseResponse.Data.Amount,
+		Value: price,
 	}, nil
 }

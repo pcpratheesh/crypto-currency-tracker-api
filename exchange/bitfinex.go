@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/pcpratheesh/crypto-currency-tracker-api/constants"
@@ -18,9 +19,9 @@ func NewBitFinexExchanger() *BitFinex {
 	return &BitFinex{}
 }
 
-func (ex *BitFinex) TrackCurrencyValue(from string, to string) (*models.TrackCurrencyResponse, error) {
+func (ex *BitFinex) TrackCurrencyValue(crypto string) (*models.TrackCurrencyResponse, error) {
 	// prepare the url
-	url := fmt.Sprintf("%s/ticker/t%s%s", constants.BITFINEX_URL, strings.ToUpper(from), strings.ToUpper(to))
+	url := fmt.Sprintf("%s/ticker/t%s%s", constants.BITFINEX_URL, strings.ToUpper(crypto), strings.ToUpper("USD"))
 
 	response, err := utils.MakeAPICall(url, http.MethodGet, nil, nil)
 	if err != nil {
@@ -34,17 +35,22 @@ func (ex *BitFinex) TrackCurrencyValue(from string, to string) (*models.TrackCur
 		return nil, err
 	}
 
-	var bitfinexResponse []interface{}
+	var bitfinexResponse struct {
+		LastPrice string `json:"last_price"`
+	}
+
 	err = json.Unmarshal(body, &bitfinexResponse)
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(bitfinexResponse[6])
+
+	price, err := strconv.ParseFloat(bitfinexResponse.LastPrice, 64)
+	if err != nil {
+		return nil, err
+	}
 
 	return &models.TrackCurrencyResponse{
-		From:  from,
-		To:    to,
-		Value: bitfinexResponse[6],
+		Value: price,
 	}, nil
 
 }
